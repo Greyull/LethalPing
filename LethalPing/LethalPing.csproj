@@ -14,9 +14,6 @@
     <Reference Include="BepInEx">
       <HintPath>E:\Steam\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx.Harmony">
-      <HintPath>E:\Steam\steamapps\common\Lethal Company\BepInEx\core\BepInEx.Harmony.dll</HintPath>
-    </Reference>
     <Reference Include="BiggerLobby">
       <HintPath>..\..\..\..\Documents\Modding\LethalCompany\NetcodePatcher\deps\BiggerLobbyV2.2.5.dll</HintPath>
     </Reference>
