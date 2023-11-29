@@ -35,12 +35,18 @@ namespace LethalPing.Patches
                 LethalPingPlugin.mls.LogInfo("Patching scanElements...");
                 GameObject refObject = HUDManager.Instance.scanElements[0].gameObject;
                 Transform pingContainer = Instantiate(HUDManager.Instance.scanElements[0].transform.parent, HUDManager.Instance.scanElements[0].parent.parent);
+                pingContainer.name = "pingContainer";
+                for(int i=0; i<pingContainer.childCount;i++)
+                {
+                    GameObject.Destroy(pingContainer.GetChild(i).gameObject);
+                }
+                pingContainer.SetSiblingIndex(10);
                 for (int i = 0; i < pingElements.Length; i++)
                 {
                     GameObject clone = Instantiate(refObject, pingContainer);
                     pingElements[i] = clone.GetComponent<RectTransform>();
                     clone.name = $"pingObject{i}";
-                    LethalPingPlugin.mls.LogInfo($"Creating PingObject{i}...");
+                    //LethalPingPlugin.mls.LogInfo($"Creating PingObject{i}...");
                 }
                 instantiating = false;
             }
