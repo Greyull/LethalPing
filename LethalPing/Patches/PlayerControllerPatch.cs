@@ -94,7 +94,7 @@ namespace LethalPing.Patches
                             }
                             else
                             {
-                                LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.collider.transform.root.position, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
+                                LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
                             }
 
                             //HUDManagerPatch.pingHits[playerNum] = pingHit;
@@ -112,7 +112,13 @@ namespace LethalPing.Patches
                                 if (hasHit)
                                 {
                                     ulong localCLientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
-                                    LethalPingPlugin.allPings[localCLientId].setObjectPing(pingHit.collider.gameObject, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
+                                    if (LethalPingPlugin.objPings.Value)
+                                    {
+                                        LethalPingPlugin.allPings[localCLientId].setObjectPing(pingHit.collider.gameObject, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
+                                    } else
+                                    {
+                                        LethalPingPlugin.allPings[localCLientId].setLocationPing(pingHit.point, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
+                                    }
                                     if (HUDManagerPatch.pingElements[localCLientId].gameObject.activeSelf)
                                     {
                                         HUDManagerPatch.pingElements[localCLientId].gameObject.SetActive(false);
