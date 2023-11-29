@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using BepInEx.Configuration;
 using HarmonyLib;
 using GameNetcodeStuff;
 using UnityEngine.InputSystem;
@@ -33,11 +34,26 @@ namespace LethalPing
 
         public static bool initializing = true;
 
+        public static ConfigFile config;
+        public static ConfigEntry<Boolean> objPings;
+        public static ConfigEntry<Boolean> plyPings;
+        public static ConfigEntry<Double> genericTime;
+        public static ConfigEntry<Double> scrapTime;
+        public static ConfigEntry<Double> enemyTime;
+        public static ConfigEntry<Double> playerTime;
+
         private Harmony _harmony = new Harmony(pluginGUID);
 
         private void Awake()
         {
             PlayerCount = GetPlayerCount();
+            config = base.Config;
+            objPings = config.Bind<Boolean>(new ConfigDefinition("General", "Object Pings Enabled"), true, new ConfigDescription("Whether or not object-type pings will be enabled, allowing ping position to move with the tagged object."));
+            plyPings = config.Bind<Boolean>(new ConfigDefinition("General", "Player Pings Enabled"), true, new ConfigDescription("Whether or not player-type pings will be enabled, allowing you to ping other players."));
+            genericTime = config.Bind<Double>(new ConfigDefinition("Timings", "Generic Ping Duration"), (double)10, new ConfigDescription("Time in seconds that generic pings will last for."));
+            scrapTime = config.Bind<Double>(new ConfigDefinition("Timings", "Scrap Ping Duration"), (double)15, new ConfigDescription("Time in seconds that scrap pings will last for."));
+            enemyTime = config.Bind<Double>(new ConfigDefinition("Timings", "Enemy Ping Duration"), (double)30, new ConfigDescription("Time in seconds that enemy pings will last for."));
+            playerTime = config.Bind<Double>(new ConfigDefinition("Timings", "Player Ping Duration"), (double)15, new ConfigDescription("Time in seconds that player pings will last for."));
             mls.LogInfo("LethalPing Plugin Loaded");
             _harmony.PatchAll(typeof(LethalPingPlugin));
             _harmony.PatchAll(typeof(HUDManagerPatch));

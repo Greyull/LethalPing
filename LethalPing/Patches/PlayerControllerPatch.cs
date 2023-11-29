@@ -88,7 +88,13 @@ namespace LethalPing.Patches
                             {
                                 playerNum = GetPlayerNum(GameNetworkManager.Instance.localPlayerController.playerClientId);
                             }*/
-                            LethalPingPlugin.allPings[localClientId].setObjectPing(pingHit.collider.transform.root.gameObject, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit));
+                            if (LethalPingPlugin.objPings.Value)
+                            {
+                                LethalPingPlugin.allPings[localClientId].setObjectPing(pingHit.collider.transform.root.gameObject, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
+                            } else
+                            {
+                                LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.collider.transform.root.position, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
+                            }
 
                             //HUDManagerPatch.pingHits[playerNum] = pingHit;
                             //HUDManagerPatch.pingTimes[localClientId] = Time.time;
@@ -99,14 +105,17 @@ namespace LethalPing.Patches
                         }
                         else
                         {
-                            hasHit = Physics.BoxCast(startPos, new Vector3(0.1f, 0.1f, 0.1f), __mainPlayer.gameplayCamera.transform.forward, out pingHit, __mainPlayer.gameplayCamera.transform.rotation, 330f, (int)GameLayers.Player);
-                            if (hasHit)
+                            if (LethalPingPlugin.plyPings.Value)
                             {
-                                ulong localCLientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
-                                LethalPingPlugin.allPings[localCLientId].setObjectPing(pingHit.collider.gameObject, 15, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 1);
-                                if (HUDManagerPatch.pingElements[localCLientId].gameObject.activeSelf)
+                                hasHit = Physics.BoxCast(startPos, new Vector3(0.1f, 0.1f, 0.1f), __mainPlayer.gameplayCamera.transform.forward, out pingHit, __mainPlayer.gameplayCamera.transform.rotation, 330f, (int)GameLayers.Player);
+                                if (hasHit)
                                 {
-                                    HUDManagerPatch.pingElements[localCLientId].gameObject.SetActive(false);
+                                    ulong localCLientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
+                                    LethalPingPlugin.allPings[localCLientId].setObjectPing(pingHit.collider.gameObject, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
+                                    if (HUDManagerPatch.pingElements[localCLientId].gameObject.activeSelf)
+                                    {
+                                        HUDManagerPatch.pingElements[localCLientId].gameObject.SetActive(false);
+                                    }
                                 }
                             }
                             GameLayers mask = GameLayers.Player | GameLayers.Props | GameLayers.Room | GameLayers.InteractableObject | GameLayers.PhysicsObject | GameLayers.Anomaly | GameLayers.Enemies | GameLayers.PlayerRagdoll | GameLayers.Terrain;
@@ -125,7 +134,7 @@ namespace LethalPing.Patches
                                 {
                                     playerNum = GetPlayerNum(GameNetworkManager.Instance.localPlayerController.playerClientId);
                                 }*/
-                                LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit));
+                                LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
 
                                 //HUDManagerPatch.pingHits[localClientId] = pingHit;
                                 //HUDManagerPatch.pingTimes[localClientId] = Time.time;
@@ -182,17 +191,17 @@ namespace LethalPing.Patches
              * if no node: lifetime is 10s;
              * */
             double curTime = LethalPingPlugin.GetCurTime();
-            double lifetime = curTime + 10;
+            double lifetime = curTime + LethalPingPlugin.genericTime.Value;
             ScanNodeProperties properties = getScanNodeProperties(pingHit);
             if ((object)properties != (object)null)
             {
                 if (properties.nodeType == 1)
                 {
-                    lifetime = curTime + 30;
+                    lifetime = curTime + LethalPingPlugin.enemyTime.Value;
                 }
                 else if (properties.nodeType == 2)
                 {
-                    lifetime = curTime + 15;
+                    lifetime = curTime + LethalPingPlugin.scrapTime.Value;
                 }
             }
             return lifetime;

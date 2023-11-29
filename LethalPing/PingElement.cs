@@ -23,6 +23,8 @@ namespace LethalPing
         public double pingLifetime { get; set; }
         [JsonProperty]
         public int nodeType { get; set; }
+        [JsonProperty]
+        public ulong clientId { get; set; }
     }
 
     [JsonObject]
@@ -33,11 +35,13 @@ namespace LethalPing
         [JsonProperty]
         public string pingText { get; set; }
         [JsonProperty]
-        public NetworkObjectReference ObjRef { get; set; }
+        public ulong networkObjId { get; set; }
         [JsonProperty]
         public double pingLifetime { get; set; }
         [JsonProperty]
         public int nodeType { get; set; }
+        [JsonProperty]
+        public ulong clientId { get; set; }
     }
 
     public class PingElement
@@ -71,7 +75,7 @@ namespace LethalPing
                     {
                         LethalPingPlugin.mls.LogWarning("Failed to parse ping data");
                     }
-                    else
+                    else if (pingData.clientId == (ulong)this.pingNum)
                     {
                         LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} at {pingData.pingPosition.ToString()} until {pingData.pingLifetime}");
                         this.pingUsername = pingData.pingUsername;
@@ -83,22 +87,23 @@ namespace LethalPing
 
                         HUDManagerPatch.pingElements[this.pingNum].gameObject.SetActive(false);
                     }
-                } else if (signature.Equals("object_ping"))
+                }
+                else if (signature.Equals("object_ping"))
                 {
                     ObjectPing pingData = JsonConvert.DeserializeObject<ObjectPing>(message);
                     if (pingData == null)
                     {
                         LethalPingPlugin.mls.LogWarning("Failed to parse ping data");
-                    } else
+                    }
+                    else if (pingData.clientId == (ulong)this.pingNum)
                     {
-                        LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} referencing object {pingData.ObjRef} until {pingData.pingLifetime}");
+                        LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} referencing objectId {pingData.networkObjId} until {pingData.pingLifetime}");
                         this.pingUsername = pingData.pingUsername;
                         this.pingText = pingData.pingText;
                         this.pingLifetime = pingData.pingLifetime;
                         this.nodeType = pingData.nodeType;
-                        NetworkObject obj;
-                        this.isAttachedToObj = pingData.ObjRef.TryGet(out obj, StartOfRound.Instance.NetworkManager);
-                        this.attachedNode = obj.gameObject;
+                        this.isAttachedToObj = pingData.networkObjId == 0 ? false : true;
+                        this.attachedNode = pingData.networkObjId == 0 ? null : findObjectById(pingData.networkObjId);
 
                         HUDManagerPatch.pingElements[this.pingNum].gameObject.SetActive(false);
                     }
@@ -106,7 +111,7 @@ namespace LethalPing
             };
         }
 
-        public void setLocationPing(Vector3 position, double lifetime, string username, string text, int nodeType)
+        public void setLocationPing(Vector3 position, double lifetime, string username, string text, int nodeType, ulong clientId)
         {
             this.pingPosition = position;
             this.pingLifetime = lifetime;
@@ -119,7 +124,8 @@ namespace LethalPing
                 pingLifetime = this.pingLifetime,
                 pingUsername = this.pingUsername,
                 pingText = this.pingText,
-                nodeType = this.nodeType
+                nodeType = this.nodeType,
+                clientId = clientId
             }, Formatting.None, new JsonSerializerSettings
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -127,7 +133,7 @@ namespace LethalPing
             LethalPingPlugin.mls.LogMessage($"Sending ping at {this.pingPosition.ToString()} until {pingLifetime}");
         }
 
-        public void setObjectPing(GameObject refObj, double lifetime, string username, string text, int nodeType)
+        public void setObjectPing(GameObject refObj, double lifetime, string username, string text, int nodeType, ulong clientId)
         {
             this.pingUsername = username;
             this.pingText = text;
@@ -140,15 +146,17 @@ namespace LethalPing
                 pingLifetime = this.pingLifetime,
                 pingUsername = this.pingUsername,
                 pingText = this.pingText,
-                ObjRef = new NetworkObjectReference(refObj),
-                nodeType = this.nodeType
+                networkObjId = (refObj.GetComponent<NetworkObject>() != null) ? refObj.GetComponent<NetworkObject>().NetworkObjectId : 0,
+                nodeType = this.nodeType,
+                clientId = clientId
             }), "object_ping");
-            LethalPingPlugin.mls.LogMessage($"Sending object ping for object {new NetworkObjectReference(refObj).ToString()} until {pingLifetime}");
+            LethalPingPlugin.mls.LogMessage($"Sending object ping for object {((refObj.GetComponent<NetworkObject>() != null) ? refObj.GetComponent<NetworkObject>().NetworkObjectId : 0)} until {pingLifetime}");
         }
 
-        public static GameObject findObjectByName(string objName)
+        public static GameObject findObjectById(ulong networkId)
         {
-            return GameObject.Find(objName);
+            if (networkId == 0) return null;
+            return NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkId].gameObject;
         }
     }
 }
