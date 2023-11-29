@@ -6,6 +6,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
+using LethalPing.Patches;
 
 namespace LethalPing
 {
@@ -51,6 +52,7 @@ namespace LethalPing
         public int ObjHash;
         public GameObject attachedNode;
         public Vector3 pingPosition;
+        public int pingNum;
 
         public PingElement()
         {
@@ -79,7 +81,7 @@ namespace LethalPing
                         this.nodeType = pingData.nodeType;
                         this.isAttachedToObj = false;
 
-                        //Add logic to disable HUD Element if already active so it replays animation.
+                        HUDManagerPatch.pingElements[this.pingNum].gameObject.SetActive(false);
                     }
                 } else if (signature.Equals("object_ping"))
                 {
@@ -97,6 +99,8 @@ namespace LethalPing
                         NetworkObject obj;
                         this.isAttachedToObj = pingData.ObjRef.TryGet(out obj, StartOfRound.Instance.NetworkManager);
                         this.attachedNode = obj.gameObject;
+
+                        HUDManagerPatch.pingElements[this.pingNum].gameObject.SetActive(false);
                     }
                 }
             };

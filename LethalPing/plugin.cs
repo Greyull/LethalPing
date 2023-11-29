@@ -90,6 +90,7 @@ namespace LethalPing
                 for (int i = 0; i < PlayerCount; i++)
                 {
                     allPings[i] = new PingElement();
+                    allPings[i].pingNum = i;
                 }
                 initializing = false;
             }
