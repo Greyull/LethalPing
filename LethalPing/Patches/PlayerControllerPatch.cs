@@ -59,7 +59,7 @@ namespace LethalPing.Patches
         {
             try
             {
-                if (initializing) { return; }
+                if (PlayerControllerPatch.initializing) { return; }
                 if ((object)__mainPlayer == (object)null)
                 {
                     __mainPlayer = StartOfRound.Instance.localPlayerController;

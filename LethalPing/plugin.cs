@@ -24,7 +24,7 @@ namespace LethalPing
 
         private const string pluginGUID = "com.greyull.lethalping";
         private const string pluginName = "Lethal Ping";
-        private const string pluginVersion = "0.0.1";
+        private const string pluginVersion = "1.0.2";
 
         public static int PlayerCount = 4;
 
