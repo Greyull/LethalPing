@@ -64,22 +64,22 @@ namespace LethalPing.Patches
                 {
                     __mainPlayer = StartOfRound.Instance.localPlayerController;
                 }
-                if ((!__instance.IsOwner || !__instance.isPlayerControlled || (__instance.IsServer && !__instance.isHostPlayerObject)) && !__instance.isTestingPlayer && !__mainPlayer.inTerminalMenu && !__mainPlayer.isTypingChat && !__mainPlayer.isPlayerDead && !__mainPlayer.quickMenuManager.isMenuOpen)
+                if (__instance.IsOwner && !__mainPlayer.inTerminalMenu && !__mainPlayer.isTypingChat && !__mainPlayer.isPlayerDead && !__mainPlayer.quickMenuManager.isMenuOpen)
                 {
                     if (Keyboard.current.tKey.wasPressedThisFrame && pingInterval <= 0f)
                     {
-                        pingInterval = 1f;
+                        pingInterval = 0.25f;
                         LethalPingPlugin.mls.LogInfo("T Key Pressed!");
                         Vector3 startPos = __mainPlayer.gameplayCamera.transform.position + (__mainPlayer.gameplayCamera.transform.forward * .5f);
 
                         hasHit = Physics.BoxCast(startPos, new Vector3(0.25f, 0.25f, 0.25f), __mainPlayer.gameplayCamera.transform.forward, out pingHit, __mainPlayer.gameplayCamera.transform.rotation, 75f, (int)GameLayers.Enemies);
                         if (hasHit)
                         {
-                            /*LethalPingPlugin.mls.LogInfo("Boxcast object was hit!");
+                            LethalPingPlugin.mls.LogInfo("Boxcast object was hit!");
                             LethalPingPlugin.mls.LogInfo($"Object name hit: {pingHit.collider.gameObject.name}");
                             LethalPingPlugin.mls.LogInfo($"Object position hit: {pingHit.point}");
                             LethalPingPlugin.mls.LogInfo($"Object layer hit: {pingHit.collider.gameObject.layer}");
-                            LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");*/
+                            LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");
 
                             ulong localClientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
 
@@ -90,11 +90,11 @@ namespace LethalPing.Patches
                             }*/
                             if (LethalPingPlugin.objPings.Value)
                             {
-                                LethalPingPlugin.allPings[localClientId].setObjectPing(pingHit.collider.transform.root.gameObject, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
+                                PingController.Instance.setObjectPing(pingHit.collider.transform.root.gameObject, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
                             }
                             else
                             {
-                                LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
+                                PingController.Instance.setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
                             }
 
                             //HUDManagerPatch.pingHits[playerNum] = pingHit;
@@ -114,10 +114,10 @@ namespace LethalPing.Patches
                                     ulong localCLientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
                                     if (LethalPingPlugin.objPings.Value)
                                     {
-                                        LethalPingPlugin.allPings[localCLientId].setObjectPing(pingHit.collider.gameObject, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
+                                        PingController.Instance.setObjectPing(pingHit.collider.gameObject, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
                                     } else
                                     {
-                                        LethalPingPlugin.allPings[localCLientId].setLocationPing(pingHit.point, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
+                                        PingController.Instance.setLocationPing(pingHit.point, LethalPingPlugin.GetCurTime() + LethalPingPlugin.playerTime.Value, StartOfRound.Instance.allPlayerScripts[localCLientId].playerUsername, ((object)pingHit.collider.gameObject.GetComponent<NetworkObject>() != (object)null ? StartOfRound.Instance.allPlayerScripts[pingHit.collider.gameObject.GetComponent<NetworkObject>().OwnerClientId].playerUsername : "new phone who dis"), 2, localCLientId);
                                     }
                                     if (HUDManagerPatch.pingElements[localCLientId].gameObject.activeSelf)
                                     {
@@ -131,11 +131,11 @@ namespace LethalPing.Patches
                                 hasHit = Physics.Raycast(__mainPlayer.gameplayCamera.transform.position + (__mainPlayer.gameplayCamera.transform.forward * .5f), __mainPlayer.gameplayCamera.transform.forward, out pingHit, 100f, (int)mask);
                                 if (hasHit)
                                 {
-                                    /*LethalPingPlugin.mls.LogInfo("Raycast object was hit!");
+                                    LethalPingPlugin.mls.LogInfo("Raycast object was hit!");
                                     LethalPingPlugin.mls.LogInfo($"Object name hit: {pingHit.collider.gameObject.name}");
                                     LethalPingPlugin.mls.LogInfo($"Object position hit: {pingHit.point}");
                                     LethalPingPlugin.mls.LogInfo($"Object layer hit: {pingHit.collider.gameObject.layer}");
-                                    LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");*/
+                                    LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");
 
                                     ulong localClientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
                                     /*int playerNum = 0;
@@ -143,14 +143,14 @@ namespace LethalPing.Patches
                                     {
                                         playerNum = GetPlayerNum(GameNetworkManager.Instance.localPlayerController.playerClientId);
                                     }*/
-                                    LethalPingPlugin.allPings[localClientId].setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
+                                    PingController.Instance.setLocationPing(pingHit.point, GetPingLifetime(pingHit), StartOfRound.Instance.allPlayerScripts[localClientId].playerUsername, GetHeaderText(pingHit), GetNodeType(pingHit), localClientId);
 
                                     //HUDManagerPatch.pingHits[localClientId] = pingHit;
                                     //HUDManagerPatch.pingTimes[localClientId] = Time.time;
                                     if (HUDManagerPatch.pingElements[localClientId].gameObject.activeSelf)
                                     {
                                         HUDManagerPatch.pingElements[localClientId].gameObject.SetActive(false);
-                                        LethalPingPlugin.allPings[localClientId].isAttachedToObj = false;
+                                        PingController.Instance.pings[localClientId].isAttachedToObj = false;
                                     }
                                 }
                             }

@@ -24,11 +24,12 @@ namespace LethalPing
 
         private const string pluginGUID = "com.greyull.lethalping";
         private const string pluginName = "Lethal Ping";
-        private const string pluginVersion = "1.0.2";
+        private const string pluginVersion = "1.1.0";
 
-        public static int PlayerCount = 4;
+        //public static int PlayerCount = 50;
 
-        public static PingElement[] allPings;
+        //public static PingElement[] allPings;
+        public static PingController pingController;
 
         public static ManualLogSource mls = BepInEx.Logging.Logger.CreateLogSource(pluginGUID);
 
@@ -46,7 +47,7 @@ namespace LethalPing
 
         private void Awake()
         {
-            PlayerCount = GetPlayerCount();
+            //PlayerCount = GetPlayerCount();
             config = base.Config;
             objPings = config.Bind<Boolean>(new ConfigDefinition("General", "Object Pings Enabled"), true, new ConfigDescription("Whether or not object-type pings will be enabled, allowing ping position to move with the tagged object."));
             plyPings = config.Bind<Boolean>(new ConfigDefinition("General", "Player Pings Enabled"), true, new ConfigDescription("Whether or not player-type pings will be enabled, allowing you to ping other players."));
@@ -58,7 +59,7 @@ namespace LethalPing
             _harmony.PatchAll(typeof(LethalPingPlugin));
             _harmony.PatchAll(typeof(HUDManagerPatch));
             _harmony.PatchAll(typeof(PlayerControllerPatch));
-            _harmony.PatchAll(typeof(PingElement));
+            _harmony.PatchAll(typeof(PingController));
         }
 
         private int GetPlayerCount()
@@ -102,12 +103,7 @@ namespace LethalPing
         {
             if (initializing)
             {
-                allPings = new PingElement[PlayerCount];
-                for (int i = 0; i < PlayerCount; i++)
-                {
-                    allPings[i] = new PingElement();
-                    allPings[i].pingNum = i;
-                }
+                pingController = new PingController();
                 initializing = false;
             }
         }
@@ -117,7 +113,7 @@ namespace LethalPing
         private static void uninitialize()
         {
             initializing = true;
-            allPings = null;
+            pingController = null;
         }
 
         public static double GetCurTime()
