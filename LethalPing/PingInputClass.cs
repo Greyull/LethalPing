@@ -9,7 +9,7 @@ namespace LethalPing
 {
     public class PingInputClass : LcInputActions
     {
-        [InputAction("ping", "<Keyboard>/g", "<Gamepad>/Button North", Name = "Ping")]
+        [InputAction("ping", "<Keyboard>/v", "", Name = "Ping")]
         public InputAction pingKey { get; set; }
 
         public static PingInputClass Instance = new PingInputClass();
