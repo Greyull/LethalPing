@@ -66,7 +66,7 @@ namespace LethalPing.Patches
                 }
                 if (__instance.IsOwner && !__mainPlayer.inTerminalMenu && !__mainPlayer.isTypingChat && !__mainPlayer.isPlayerDead && !__mainPlayer.quickMenuManager.isMenuOpen)
                 {
-                    if (Keyboard.current.tKey.wasPressedThisFrame && pingInterval <= 0f)
+                    if (PingInputClass.Instance.pingKey.WasPressedThisFrame() && pingInterval <= 0f)
                     {
                         pingInterval = 0.25f;
                         LethalPingPlugin.mls.LogInfo("T Key Pressed!");

@@ -19,12 +19,14 @@ namespace LethalPing
     [BepInPlugin(pluginGUID, pluginName, pluginVersion)]
     [BepInDependency("me.swipez.melonloader.morecompany", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("BiggerLobby", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("LC_API", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("com.rune580.LethalCompanyInputUtils", BepInDependency.DependencyFlags.HardDependency)]
     public class LethalPingPlugin : BaseUnityPlugin
     {
 
         private const string pluginGUID = "com.greyull.lethalping";
         private const string pluginName = "Lethal Ping";
-        private const string pluginVersion = "1.1.0";
+        private const string pluginVersion = "1.2.0";
 
         //public static int PlayerCount = 50;
 

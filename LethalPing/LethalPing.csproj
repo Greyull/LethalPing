@@ -15,7 +15,7 @@
       <HintPath>E:\Steam\steamapps\common\Lethal Company\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="BiggerLobby">
-      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\cache\bizzlemip-BiggerLobby\2.4.0\BepInEx\plugins\BiggerLobby.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\cache\bizzlemip-BiggerLobby\2.5.1\BepInEx\plugins\BiggerLobby.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Steamworks.Win64">
       <HintPath>E:\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
@@ -23,8 +23,11 @@
     <Reference Include="LC_API">
       <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\profiles\Default\BepInEx\plugins\2018-LC_API\LC_API.dll</HintPath>
     </Reference>
+    <Reference Include="LethalCompanyInputUtils">
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\cache\Rune580-LethalCompany_InputUtils\0.2.0\LethalCompanyInputUtils\LethalCompanyInputUtils.dll</HintPath>
+    </Reference>
     <Reference Include="MoreCompany">
-      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\cache\notnotnotswipez-MoreCompany\1.5.1\BepInEx\plugins\MoreCompany.dll</HintPath>
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\LethalCompany\cache\notnotnotswipez-MoreCompany\1.7.1\BepInEx\plugins\MoreCompany.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>E:\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Newtonsoft.Json.dll</HintPath>
