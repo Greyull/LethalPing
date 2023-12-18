@@ -26,7 +26,7 @@ namespace LethalPing
 
         private const string pluginGUID = "com.greyull.lethalping";
         private const string pluginName = "Lethal Ping";
-        private const string pluginVersion = "1.2.0";
+        private const string pluginVersion = "1.2.2";
 
         //public static int PlayerCount = 50;
 
@@ -44,12 +44,13 @@ namespace LethalPing
         public static ConfigEntry<Double> scrapTime;
         public static ConfigEntry<Double> enemyTime;
         public static ConfigEntry<Double> playerTime;
+        public static ConfigEntry<Boolean> debugLogs;
 
         private Harmony _harmony = new Harmony(pluginGUID);
 
         private void Awake()
         {
-            //PlayerCount = GetPlayerCount();
+            //Config Bindings
             config = base.Config;
             objPings = config.Bind<Boolean>(new ConfigDefinition("General", "Object Pings Enabled"), true, new ConfigDescription("Whether or not object-type pings will be enabled, allowing ping position to move with the tagged object."));
             plyPings = config.Bind<Boolean>(new ConfigDefinition("General", "Player Pings Enabled"), true, new ConfigDescription("Whether or not player-type pings will be enabled, allowing you to ping other players."));
@@ -57,7 +58,12 @@ namespace LethalPing
             scrapTime = config.Bind<Double>(new ConfigDefinition("Timings", "Scrap Ping Duration"), (double)15, new ConfigDescription("Time in seconds that scrap pings will last for."));
             enemyTime = config.Bind<Double>(new ConfigDefinition("Timings", "Enemy Ping Duration"), (double)30, new ConfigDescription("Time in seconds that enemy pings will last for."));
             playerTime = config.Bind<Double>(new ConfigDefinition("Timings", "Player Ping Duration"), (double)15, new ConfigDescription("Time in seconds that player pings will last for."));
+            debugLogs = config.Bind<Boolean>(new ConfigDefinition("Debug", "Debug Logging Enabled"), false, new ConfigDescription("Whether or not debug logs should be printed to console."));
+
+            //PlayerCount = GetPlayerCount();
             mls.LogInfo("LethalPing Plugin Loaded");
+
+            //Harmony Patch operations
             _harmony.PatchAll(typeof(LethalPingPlugin));
             _harmony.PatchAll(typeof(HUDManagerPatch));
             _harmony.PatchAll(typeof(PlayerControllerPatch));
@@ -78,7 +84,7 @@ namespace LethalPing
                 }
                 catch (TypeLoadException)
                 {
-                    mls.LogMessage("No larger lobby mods detected, playercount kept at default of 4...");
+                    if (LethalPingPlugin.debugLogs.Value) mls.LogMessage("No larger lobby mods detected, playercount kept at default of 4...");
                     return 4;
                 }
             }
@@ -88,14 +94,14 @@ namespace LethalPing
         private int CheckForMoreCompany()
         {
             //No logic needed to check if moreCompany exists, this method will pass TypeLoadException if MoreCompany doesn't exist.
-            mls.LogMessage($"MoreCompany detected, adjusting playercount to MoreCompany count {MainClass.newPlayerCount}...");
+            if (LethalPingPlugin.debugLogs.Value) mls.LogMessage($"MoreCompany detected, adjusting playercount to MoreCompany count {MainClass.newPlayerCount}...");
             return MainClass.newPlayerCount;
         }
 
         private int CheckForBiggerLobby()
         {
             //No logic needed to check if BiggerLobby exists, this method will pass TypeLoadException if BiggerLobby doesn't exist.
-            mls.LogMessage($"BiggerLobby detected, adjusting playercount to BiggerLobby count {Plugin.MaxPlayers}...");
+            if (LethalPingPlugin.debugLogs.Value) mls.LogMessage($"BiggerLobby detected, adjusting playercount to BiggerLobby count {Plugin.MaxPlayers}...");
             return Plugin.MaxPlayers;
         }
 

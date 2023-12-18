@@ -84,7 +84,7 @@ namespace LethalPing
         [HarmonyPostfix()]
         public static void CreatePingElements(StartOfRound __instance)
         {
-            LethalPingPlugin.mls.LogInfo("Creating PingElements...");
+            if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogInfo("Creating PingElements...");
             for(int i=0;i<GameNetworkManager.Instance.currentLobby.Value.MaxMembers;i++)
             {
                 PingController.Instance.pings[Convert.ToUInt64(i)] = new PingElement();
@@ -131,17 +131,17 @@ namespace LethalPing
         {
             Networking.GetString = delegate (string message, string signature)
             {
-                LethalPingPlugin.mls.LogInfo($"{signature} Received message: {message}");
+                if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogInfo($"{signature} Received message: {message}");
                 if (signature.Equals("location_ping"))
                 {
                     LocationPing pingData = JsonConvert.DeserializeObject<LocationPing>(message);
                     if (pingData == null)
                     {
-                        LethalPingPlugin.mls.LogWarning("Failed to parse ping data");
+                        if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogWarning("Failed to parse ping data");
                     }
                     else
                     {
-                        LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} at {pingData.pingPosition.ToString()} until {pingData.pingLifetime}");
+                        if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} at {pingData.pingPosition.ToString()} until {pingData.pingLifetime}");
                         //this.pingUsername[pingData.clientId] = pingData.pingUsername;
                         this.pings[pingData.clientId].pingUsername = pingData.pingUsername;
                         //this.pingText[pingData.clientId] = pingData.pingText;
@@ -162,11 +162,11 @@ namespace LethalPing
                     ObjectPing pingData = JsonConvert.DeserializeObject<ObjectPing>(message);
                     if (pingData == null)
                     {
-                        LethalPingPlugin.mls.LogWarning("Failed to parse ping data");
+                        if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogWarning("Failed to parse ping data");
                     }
                     else
                     {
-                        LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} referencing objectId {pingData.networkObjId} until {pingData.pingLifetime}");
+                        if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogMessage($"Received ping from {pingData.pingUsername} containing {pingData.pingText} referencing objectId {pingData.networkObjId} until {pingData.pingLifetime}");
                         //this.pingUsername[pingData.clientId] = pingData.pingUsername;
                         this.pings[pingData.clientId].pingUsername = pingData.pingUsername;
                         //this.pingText[pingData.clientId] = pingData.pingText;
@@ -210,7 +210,7 @@ namespace LethalPing
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             }), "location_ping");
-            LethalPingPlugin.mls.LogMessage($"Sending ping at {this.pings[clientId].pingPosition.ToString()} until {this.pings[clientId].pingLifetime}");
+            if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogMessage($"Sending ping at {this.pings[clientId].pingPosition.ToString()} until {this.pings[clientId].pingLifetime}");
         }
 
         public void setObjectPing(GameObject refObj, double lifetime, string username, string text, int nodeType, ulong clientId)
@@ -236,7 +236,7 @@ namespace LethalPing
                 nodeType = this.pings[clientId].nodeType,
                 clientId = clientId
             }), "object_ping");
-            LethalPingPlugin.mls.LogMessage($"Sending object ping for object {((refObj.GetComponent<NetworkObject>() != null) ? refObj.GetComponent<NetworkObject>().NetworkObjectId : 0)} until {lifetime}");
+            if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogMessage($"Sending object ping for object {((refObj.GetComponent<NetworkObject>() != null) ? refObj.GetComponent<NetworkObject>().NetworkObjectId : 0)} until {lifetime}");
 
         }
 

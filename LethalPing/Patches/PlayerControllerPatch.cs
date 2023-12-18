@@ -69,17 +69,20 @@ namespace LethalPing.Patches
                     if (PingInputClass.Instance.pingKey.WasPressedThisFrame() && pingInterval <= 0f)
                     {
                         pingInterval = 0.25f;
-                        LethalPingPlugin.mls.LogInfo("T Key Pressed!");
+                        LethalPingPlugin.mls.LogInfo("Ping Key Pressed!");
                         Vector3 startPos = __mainPlayer.gameplayCamera.transform.position + (__mainPlayer.gameplayCamera.transform.forward * .5f);
 
                         hasHit = Physics.BoxCast(startPos, new Vector3(0.25f, 0.25f, 0.25f), __mainPlayer.gameplayCamera.transform.forward, out pingHit, __mainPlayer.gameplayCamera.transform.rotation, 75f, (int)GameLayers.Enemies);
                         if (hasHit)
                         {
-                            LethalPingPlugin.mls.LogInfo("Boxcast object was hit!");
-                            LethalPingPlugin.mls.LogInfo($"Object name hit: {pingHit.collider.gameObject.name}");
-                            LethalPingPlugin.mls.LogInfo($"Object position hit: {pingHit.point}");
-                            LethalPingPlugin.mls.LogInfo($"Object layer hit: {pingHit.collider.gameObject.layer}");
-                            LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");
+                            if (LethalPingPlugin.debugLogs.Value)
+                            {
+                                LethalPingPlugin.mls.LogInfo("Boxcast object was hit!");
+                                LethalPingPlugin.mls.LogInfo($"Object name hit: {pingHit.collider.gameObject.name}");
+                                LethalPingPlugin.mls.LogInfo($"Object position hit: {pingHit.point}");
+                                LethalPingPlugin.mls.LogInfo($"Object layer hit: {pingHit.collider.gameObject.layer}");
+                                LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");
+                            }
 
                             ulong localClientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
 
@@ -131,11 +134,14 @@ namespace LethalPing.Patches
                                 hasHit = Physics.Raycast(__mainPlayer.gameplayCamera.transform.position + (__mainPlayer.gameplayCamera.transform.forward * .5f), __mainPlayer.gameplayCamera.transform.forward, out pingHit, 100f, (int)mask);
                                 if (hasHit)
                                 {
-                                    LethalPingPlugin.mls.LogInfo("Raycast object was hit!");
-                                    LethalPingPlugin.mls.LogInfo($"Object name hit: {pingHit.collider.gameObject.name}");
-                                    LethalPingPlugin.mls.LogInfo($"Object position hit: {pingHit.point}");
-                                    LethalPingPlugin.mls.LogInfo($"Object layer hit: {pingHit.collider.gameObject.layer}");
-                                    LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");
+                                    if (LethalPingPlugin.debugLogs.Value)
+                                    {
+                                        LethalPingPlugin.mls.LogInfo("Raycast object was hit!");
+                                        LethalPingPlugin.mls.LogInfo($"Object name hit: {pingHit.collider.gameObject.name}");
+                                        LethalPingPlugin.mls.LogInfo($"Object position hit: {pingHit.point}");
+                                        LethalPingPlugin.mls.LogInfo($"Object layer hit: {pingHit.collider.gameObject.layer}");
+                                        LethalPingPlugin.mls.LogInfo($"Scannode properties (if any): {GetHeaderText(pingHit)}");
+                                    }
 
                                     ulong localClientId = GameNetworkManager.Instance.localPlayerController.playerClientId;
                                     /*int playerNum = 0;

@@ -33,7 +33,7 @@ namespace LethalPing.Patches
         {
             if (HUDManagerPatch.instantiating)
             {
-                LethalPingPlugin.mls.LogInfo("Patching scanElements...");
+                if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogInfo("Patching scanElements...");
                 GameObject refObject = HUDManager.Instance.scanElements[0].gameObject;
                 Transform pingContainer = Instantiate(HUDManager.Instance.scanElements[0].transform.parent, HUDManager.Instance.scanElements[0].parent.parent);
                 pingContainer.name = "pingContainer";
