@@ -85,7 +85,7 @@ namespace LethalPing
         public static void CreatePingElements(StartOfRound __instance)
         {
             if (LethalPingPlugin.debugLogs.Value) LethalPingPlugin.mls.LogInfo("Creating PingElements...");
-            for(int i=0;i<GameNetworkManager.Instance.currentLobby.Value.MaxMembers;i++)
+            for (int i = 0; i < GameNetworkManager.Instance.currentLobby.Value.MaxMembers; i++)
             {
                 PingController.Instance.pings[Convert.ToUInt64(i)] = new PingElement();
             }
@@ -96,6 +96,17 @@ namespace LethalPing
         public static void Uninstantiate()
         {
             PingController.Instance.pings = new Dictionary<ulong, PingElement>();
+        }
+
+        [HarmonyPatch(typeof(SceneManager), "LoadScene")]
+        [HarmonyPostfix()]
+        public static void clearPingsOnSceneChange()
+        {
+            foreach (KeyValuePair<ulong, PingElement> p in PingController.Instance.pings)
+            {
+                p.Value.pingLifetime = 0;
+                HUDManagerPatch.pingElements[p.Key].gameObject.SetActive(false);
+            }
         }
 
         /*[HarmonyPatch(typeof(StartOfRound), "OnClientConnect")]

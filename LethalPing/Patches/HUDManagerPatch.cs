@@ -38,7 +38,7 @@ namespace LethalPing.Patches
                 Transform pingContainer = Instantiate(HUDManager.Instance.scanElements[0].transform.parent, HUDManager.Instance.scanElements[0].parent.parent);
                 pingContainer.name = "pingContainer";
                 //Destroying pre-existing scanElements from copied scan element container--creating an empty transform would break the animations, I'm assuming some MonoBehaviour nonsense is tying the animation to the container??? either way I don't need a ton of extra objects, that's just a waste of memory.
-                for(int i=0; i<pingContainer.childCount;i++)
+                for (int i = 0; i < pingContainer.childCount; i++)
                 {
                     GameObject.Destroy(pingContainer.GetChild(i).gameObject);
                 }
@@ -105,19 +105,19 @@ namespace LethalPing.Patches
         [HarmonyPrefix()]
         private static void updatePingElements(HUDManager __instance, PlayerControllerB playerScript)
         {
-            foreach (KeyValuePair<ulong, PingElement>element in PingController.Instance.pings)
+            foreach (KeyValuePair<ulong, PingElement> element in PingController.Instance.pings)
             {
                 if (element.Value.pingUsername != (object)null)
                 {
                     if ((object)element.Value.pingLifetime != (object)null || element.Value.pingLifetime != 0)
                     {
-                        if (LethalPingPlugin.GetCurTime() - element.Value.pingLifetime < 0 )
+                        if (LethalPingPlugin.GetCurTime() - element.Value.pingLifetime < 0)
                         {
-                            pingElements[element.Key].gameObject.SetActive(true);                            
+                            pingElements[element.Key].gameObject.SetActive(true);
                             TextMeshProUGUI[] pingElementsText = pingElements[element.Key].gameObject.GetComponentsInChildren<TextMeshProUGUI>();
                             pingElementsText[0].text = element.Value.pingUsername;
                             pingElementsText[1].text = element.Value.pingText;
-                            Vector3 zero = new Vector3(0,0,0);
+                            Vector3 zero = new Vector3(0, 0, 0);
                             float distance;
                             float elementScale = 1;
                             if (element.Value.isAttachedToObj)
@@ -127,29 +127,35 @@ namespace LethalPing.Patches
                                 if (distance > 100)
                                 {
                                     pingElements[element.Key].gameObject.SetActive(false);
-                                } else
+                                }
+                                else
                                 {
-                                    if (distance < 6) {
+                                    if (distance < 6)
+                                    {
                                         elementScale = 1;
-                                    } else
+                                    }
+                                    else
                                     {
                                         elementScale = (float)(1 / Math.Log(distance, 6));
                                     }
-                                    
+
                                 }
-                            } else
+                            }
+                            else
                             {
                                 zero = StartOfRound.Instance.localPlayerController.gameplayCamera.WorldToScreenPoint(element.Value.pingPosition);
                                 distance = Vector3.Distance(StartOfRound.Instance.localPlayerController.transform.position, element.Value.pingPosition);
                                 if (distance > 100)
                                 {
                                     pingElements[element.Key].gameObject.SetActive(false);
-                                } else
+                                }
+                                else
                                 {
                                     if (distance < 6)
                                     {
                                         elementScale = 1;
-                                    } else
+                                    }
+                                    else
                                     {
                                         elementScale = (float)(1 / Math.Log(distance, 6));
                                     }
@@ -158,11 +164,12 @@ namespace LethalPing.Patches
                             pingElements[element.Key].anchoredPosition = new Vector2(zero.x - 439.48f, zero.y - 244.8f);
                             pingElements[element.Key].localScale = new Vector3(elementScale, elementScale, elementScale);
                             pingElements[element.Key].GetComponent<Animator>().SetInteger("colorNumber", element.Value.nodeType);
-                            if(zero.z < 0)
+                            if (zero.z < 0)
                             {
                                 pingElements[element.Key].gameObject.SetActive(false);
                             }
-                        } else
+                        }
+                        else
                         {
                             pingElements[element.Key].gameObject.SetActive(false);
                             if (element.Value.isAttachedToObj)
